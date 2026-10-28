@@ -1,0 +1,133 @@
+---
+import { getCollection, getEntry, getEntries, render } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+
+export async function getStaticPaths() {
+  const cargos = await getCollection('cargos');
+  return cargos.map((cargo) => ({ params: { slug: cargo.id }, props: { cargo } }));
+}
+
+const { cargo } = Astro.props;
+const d = cargo.data;
+
+const poder = await getEntry(d.poder);
+const conceitos = d.conceitos ? await getEntries(d.conceitos) : [];
+const { Content } = await render(cargo);
+
+const accent = poder?.data.cor ?? 'var(--ink)';
+const sistemaLabel = d.sistema === 'majoritario' ? 'Majoritário' : 'Proporcional';
+const reeleicaoLabel = { uma: 'Uma reeleição', ilimitada: 'Ilimitada', nao: 'Não há' }[d.reeleicao];
+const nacionalidadeLabel = d.nacionalidade === 'nato' ? 'Brasileiro nato' : 'Nato ou naturalizado';
+const esferaLabel = d.esfera.charAt(0).toUpperCase() + d.esfera.slice(1);
+---
+
+<Base title={`${d.nome} — PoliticaBR`} description={d.resumo}>
+  <article class="ficha wrap" style={`--accent:${accent}`}>
+    <header class="ficha-head">
+      <p class="ficha-meta">
+        <a href="/cargos/">Cargos</a><span aria-hidden="true">·</span>
+        <span>{poder?.data.nome}</span><span aria-hidden="true">·</span>
+        <span>{esferaLabel}</span>
+      </p>
+      <h1>{d.nome}</h1>
+      <p class="ficha-lead">{d.resumo}</p>
+    </header>
+
+    <div class="ficha-body">
+      <div class="ficha-main">
+        <section>
+          <h2>O que é</h2>
+          <p>{d.oQueE}</p>
+        </section>
+
+        <section class="prose">
+          <Content />
+        </section>
+
+        <section>
+          <h2>Principais atribuições</h2>
+          <ul class="atrib">
+            {d.atribuicoes.map((a) => <li>{a}</li>)}
+          </ul>
+        </section>
+
+        <section>
+          <h2>Limites e fiscalização</h2>
+          <p>{d.limites}</p>
+        </section>
+
+        {d.reelUrl && (
+          <section>
+            <h2>No vídeo</h2>
+            <p><a href={d.reelUrl}>Assista ao reel sobre este cargo</a></p>
+          </section>
+        )}
+
+        {conceitos.length > 0 && (
+          <section class="ligados">
+            <h2>Conceitos ligados</h2>
+            <ul>
+              {conceitos.map((c) => (
+                <li><a href={`/glossario/#${c.id}`}>{c.data.termo}</a></li>
+              ))}
+            </ul>
+          </section>
+        )}
+      </div>
+
+      <aside class="ficha-rapida" aria-label="Ficha rápida">
+        <h2>Ficha rápida</h2>
+        <dl>
+          <div><dt>Poder</dt><dd>{poder?.data.nome}</dd></div>
+          <div><dt>Esfera</dt><dd>{esferaLabel}</dd></div>
+          <div><dt>Sistema</dt><dd>{sistemaLabel}</dd></div>
+          <div><dt>Mandato</dt><dd>{d.mandatoAnos} anos</dd></div>
+          <div><dt>Reeleição</dt><dd>{reeleicaoLabel}</dd></div>
+          <div><dt>Idade mínima</dt><dd>{d.idadeMinima} anos</dd></div>
+          <div><dt>Nacionalidade</dt><dd>{nacionalidadeLabel}</dd></div>
+        </dl>
+      </aside>
+    </div>
+  </article>
+</Base>
+
+<style>
+  .ficha { padding-block: 1rem 2rem; }
+
+  .ficha-head { border-left: 4px solid var(--accent); padding-left: 1.3rem; margin-block: 2.5rem 2.5rem; }
+  .ficha-meta { display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; color: var(--muted); font-size: 0.9rem; font-weight: 500; margin: 0 0 0.8rem; }
+  .ficha-meta a { color: var(--accent); text-decoration: none; }
+  .ficha-meta a:hover { text-decoration: underline; }
+  .ficha-head h1 { font-size: clamp(2.2rem, 5.5vw, 3.5rem); margin: 0; }
+  .ficha-lead { font-size: 1.2rem; color: var(--muted); max-width: var(--measure); margin: 0.9rem 0 0; line-height: 1.45; }
+
+  .ficha-body { display: grid; grid-template-columns: minmax(0, 1fr) 16rem; gap: 3.5rem; align-items: start; }
+
+  .ficha-main section + section { margin-top: 2.4rem; }
+  .ficha-main h2 { font-size: 1.35rem; margin: 0 0 0.6rem; }
+  .ficha-main p { max-width: var(--measure); margin: 0; }
+
+  .atrib { margin: 0; padding-left: 1.15rem; max-width: var(--measure); }
+  .atrib li { margin: 0.4rem 0; padding-left: 0.25rem; }
+  .atrib li::marker { color: var(--accent); }
+
+  .prose :global(p) { max-width: var(--measure); margin: 0.9rem 0 0; }
+  .prose :global(p:first-child) { margin-top: 0; }
+
+  .ligados ul { list-style: none; display: flex; flex-wrap: wrap; gap: 0.5rem; padding: 0; margin: 0.5rem 0 0; }
+  .ligados a { display: inline-block; border: 1px solid var(--line-strong); border-radius: 999px; padding: 0.3rem 0.85rem; text-decoration: none; font-size: 0.9rem; }
+  .ligados a:hover { border-color: var(--accent); color: var(--accent); }
+
+  .ficha-rapida { position: sticky; top: 5rem; background: var(--surface); border: 1px solid var(--line); border-top: 3px solid var(--accent); border-radius: 2px; padding: 1.15rem 1.3rem 1.35rem; }
+  .ficha-rapida h2 { font-family: var(--sans); font-weight: 700; font-size: 0.95rem; letter-spacing: 0; margin: 0 0 0.85rem; }
+  .ficha-rapida dl { margin: 0; display: grid; gap: 0.6rem; }
+  .ficha-rapida dl > div { display: flex; justify-content: space-between; gap: 1rem; border-bottom: 1px solid var(--line); padding-bottom: 0.6rem; }
+  .ficha-rapida dl > div:last-child { border-bottom: 0; padding-bottom: 0; }
+  .ficha-rapida dt { color: var(--muted); font-size: 0.9rem; }
+  .ficha-rapida dd { margin: 0; font-weight: 600; font-size: 0.9rem; text-align: right; }
+
+  @media (max-width: 52rem) {
+    .ficha-body { grid-template-columns: 1fr; gap: 2.2rem; }
+    .ficha-rapida { position: static; }
+  }
+</style>
