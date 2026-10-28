@@ -1,0 +1,40 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../layouts/Base.astro';
+
+const conceitos = (await getCollection('conceitos')).sort((a, b) =>
+  a.data.termo.localeCompare(b.data.termo, 'pt')
+);
+---
+
+<Base
+  title="Glossário — PoliticaBR"
+  description="Os termos da política e das eleições explicados em linguagem simples."
+>
+  <section class="page wrap">
+    <h1>Glossário</h1>
+    <p class="page-intro">Os termos da política e das eleições explicados em linguagem simples.</p>
+
+    <dl class="glossario">
+      {conceitos.map((c) => (
+        <div class="termo" id={c.id}>
+          <dt>{c.data.termo}</dt>
+          <dd>{c.data.definicao}</dd>
+        </div>
+      ))}
+    </dl>
+  </section>
+</Base>
+
+<style>
+  .page { padding-block: 2.5rem 1rem; }
+  .page > h1 { font-size: clamp(2rem, 4vw, 2.8rem); margin: 0; }
+  .page-intro { color: var(--muted); font-size: 1.1rem; max-width: 50ch; margin: 0.6rem 0 0; }
+
+  .glossario { margin: 2rem 0 0; }
+  .termo { padding: 1.1rem 0 1.1rem 1.1rem; border-top: 1px solid var(--line); border-left: 3px solid transparent; scroll-margin-top: 5rem; }
+  .termo:last-child { border-bottom: 1px solid var(--line); }
+  .termo dt { font-family: var(--serif); font-weight: 600; font-size: 1.25rem; }
+  .termo dd { margin: 0.35rem 0 0; max-width: var(--measure); }
+  .termo:target { border-left-color: var(--br-amarelo); background: color-mix(in srgb, var(--br-amarelo) 8%, transparent); }
+</style>

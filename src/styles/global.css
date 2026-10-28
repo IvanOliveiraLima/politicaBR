@@ -13,6 +13,11 @@
   /* cada página de ficha sobrescreve --accent com a cor do seu poder */
   --accent: var(--ink);
 
+  /* acentos nacionais, usados com parcimônia */
+  --br-verde: #1d9e75;
+  --br-amarelo: #f5c400;
+  --br-azul: #15356b;
+
   --serif: "Fraunces", Georgia, "Times New Roman", serif;
   --sans: "Public Sans", system-ui, -apple-system, Segoe UI, sans-serif;
 
@@ -31,6 +36,15 @@ body {
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
 }
+
+/* linha fina verde->amarelo no topo do site: acento nacional discreto */
+body::before {
+  content: "";
+  display: block;
+  height: 3px;
+  background: linear-gradient(90deg, var(--br-verde), var(--br-amarelo));
+}
+
 h1, h2, h3 { font-family: var(--serif); font-weight: 600; line-height: 1.14; letter-spacing: -0.01em; }
 a { color: inherit; }
 :focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 2px; }

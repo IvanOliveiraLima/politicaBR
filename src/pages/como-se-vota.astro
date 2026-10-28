@@ -1,0 +1,57 @@
+---
+import { getCollection, render } from 'astro:content';
+import Base from '../layouts/Base.astro';
+
+const entries = (await getCollection('mecanismos')).sort((a, b) => a.data.ordem - b.data.ordem);
+const sections = await Promise.all(
+  entries.map(async (e) => ({ e, Content: (await render(e)).Content }))
+);
+---
+
+<Base
+  title="Como se vota — PoliticaBR"
+  description="Os dois ciclos, os sistemas de votação, os turnos e quem organiza as eleições no Brasil."
+>
+  <section class="page wrap">
+    <h1>Como se vota</h1>
+    <p class="page-intro">Os dois ciclos, os sistemas de votação, os turnos e quem organiza as eleições no Brasil.</p>
+
+    <nav class="toc" aria-label="Nesta página">
+      <ul>
+        {entries.map((e) => (
+          <li><a href={`#${e.id}`}>{e.data.titulo}</a></li>
+        ))}
+      </ul>
+    </nav>
+
+    <div class="mechs">
+      {sections.map(({ e, Content }) => (
+        <section id={e.id} class="mech">
+          <h2>{e.data.titulo}</h2>
+          <p class="mech-lead">{e.data.resumo}</p>
+          <div class="prose"><Content /></div>
+        </section>
+      ))}
+    </div>
+  </section>
+</Base>
+
+<style>
+  .page { padding-block: 2.5rem 1rem; }
+  .page > h1 { font-size: clamp(2rem, 4vw, 2.8rem); margin: 0; }
+  .page-intro { color: var(--muted); font-size: 1.1rem; max-width: 52ch; margin: 0.6rem 0 0; }
+
+  .toc { margin: 2rem 0 0; border-left: 3px solid var(--line-strong); padding-left: 1rem; }
+  .toc ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 0.4rem; }
+  .toc a { text-decoration: none; color: var(--muted); font-weight: 500; }
+  .toc a:hover { color: var(--ink); }
+
+  .mech { scroll-margin-top: 5rem; padding-block: 2.25rem; border-top: 1px solid var(--line); max-width: var(--measure); }
+  .mech:first-of-type { border-top: 0; }
+  .mech h2 { font-size: 1.6rem; margin: 0; }
+  .mech-lead { color: var(--muted); font-size: 1.1rem; margin: 0.4rem 0 0; }
+
+  .prose :global(p) { margin: 1rem 0 0; }
+  .prose :global(ul) { margin: 1rem 0 0; padding-left: 1.15rem; }
+  .prose :global(li) { margin: 0.35rem 0; }
+</style>
