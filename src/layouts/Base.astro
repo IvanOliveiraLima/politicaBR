@@ -1,0 +1,32 @@
+---
+interface Props {
+  title: string
+  description?: string
+}
+
+const { title, description = 'PoliticaBR — referência sobre o sistema político brasileiro' } = Astro.props
+---
+
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="generator" content={Astro.generator} />
+    <meta name="description" content={description} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" href="/favicon.ico" />
+    <title>{title} | PoliticaBR</title>
+  </head>
+  <body>
+    <header>
+      <a href="/">PoliticaBR</a>
+    </header>
+    <main>
+      <slot />
+    </main>
+    <footer>
+      <p>PoliticaBR</p>
+    </footer>
+  </body>
+</html>
