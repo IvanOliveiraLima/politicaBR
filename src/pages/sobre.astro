@@ -1,0 +1,67 @@
+---
+import Base from '../layouts/Base.astro';
+---
+
+<Base
+  title="Sobre e fontes — PoliticaBR"
+  description="O propósito do projeto, o compromisso apartidário e as fontes oficiais que embasam o conteúdo."
+>
+  <section class="page wrap">
+    <h1>Sobre o PoliticaBR</h1>
+    <p class="page-intro">Um projeto independente de educação cívica. Explica, em linguagem simples, o que fazem os cargos que você elege e como funciona o poder no Brasil — para que qualquer pessoa vote com mais clareza.</p>
+
+    <div class="sobre">
+      <h2>Apartidário por princípio</h2>
+      <p>Este site explica como o sistema funciona; não defende partidos, candidatos ou ideologias. Quando um assunto é de fato controverso — como a reeleição ou o sistema proporcional —, a intenção é apresentar os diferentes pontos de vista, e não convencer você de um lado. O objetivo é dar ferramentas para você formar a própria opinião.</p>
+
+      <h2>Compromisso com a precisão</h2>
+      <p>O conteúdo é baseado em fontes oficiais. Alguns números mudam a cada eleição — como a quantidade de deputados ou os limiares de certas regras — e esses dados são conferidos nas fontes oficiais antes de publicar, nunca de memória. Encontrou algo desatualizado ou impreciso? Você pode avisar pelo repositório no GitHub.</p>
+
+      <h2>Isto não é um site do governo</h2>
+      <p>O PoliticaBR é um projeto independente, sem vínculo com órgãos públicos. Para atos e informações oficiais, consulte sempre as fontes abaixo.</p>
+
+      <h2>Fontes</h2>
+      <ul class="fontes">
+        <li>
+          <a href="https://www.planalto.gov.br/ccivil_03/constituicao/constituicao.htm" target="_blank" rel="noopener noreferrer">Constituição Federal de 1988</a>
+          <span>A regra máxima do sistema político brasileiro.</span>
+        </li>
+        <li>
+          <a href="https://www.tse.jus.br" target="_blank" rel="noopener noreferrer">Tribunal Superior Eleitoral (TSE)</a>
+          <span>Regras das eleições, candidaturas e resultados.</span>
+        </li>
+        <li>
+          <a href="https://www.camara.leg.br" target="_blank" rel="noopener noreferrer">Câmara dos Deputados</a>
+          <span>Atribuições e composição da Câmara.</span>
+        </li>
+        <li>
+          <a href="https://www.senado.leg.br" target="_blank" rel="noopener noreferrer">Senado Federal</a>
+          <span>Atribuições e composição do Senado.</span>
+        </li>
+      </ul>
+
+      <h2>Código aberto</h2>
+      <p>O projeto é de código aberto — você pode ver como ele é feito, sugerir correções ou contribuir no <a class="inline-link" href="https://github.com/IvanOliveiraLima/politicaBR" target="_blank" rel="noopener noreferrer">repositório no GitHub</a>.</p>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .page { padding-block: 2.5rem 1rem; }
+  .page > h1 { font-size: clamp(2rem, 4vw, 2.8rem); margin: 0; }
+  .page-intro { color: var(--muted); font-size: 1.15rem; max-width: 58ch; margin: 0.7rem 0 0; }
+
+  .sobre { max-width: var(--measure); }
+  .sobre h2 { font-size: 1.4rem; margin: 2.5rem 0 0.5rem; }
+  .sobre p { margin: 0; }
+
+  .fontes { list-style: none; padding: 0; margin: 0.5rem 0 0; }
+  .fontes li { border-top: 1px solid var(--line); padding: 0.85rem 0; }
+  .fontes li:last-child { border-bottom: 1px solid var(--line); }
+  .fontes a { font-weight: 600; text-decoration: none; border-bottom: 2px solid var(--br-amarelo); padding-bottom: 1px; }
+  .fontes a:hover { border-bottom-color: var(--ink); }
+  .fontes span { display: block; color: var(--muted); font-size: 0.9rem; margin-top: 0.2rem; }
+
+  .inline-link { font-weight: 600; text-decoration: none; border-bottom: 2px solid var(--br-amarelo); padding-bottom: 1px; }
+  .inline-link:hover { border-bottom-color: var(--ink); }
+</style>

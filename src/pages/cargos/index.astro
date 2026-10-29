@@ -1,0 +1,124 @@
+---
+import { getCollection, getEntry } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+
+const raw = (await getCollection('cargos')).sort((a, b) => a.data.ordem - b.data.ordem);
+const cargos = await Promise.all(
+  raw.map(async (c) => {
+    const poder = await getEntry(c.data.poder);
+    return {
+      id: c.id,
+      data: c.data,
+      poderId: c.data.poder.id,
+      poderNome: poder?.data.nome ?? '',
+      cor: poder?.data.cor ?? 'var(--ink)',
+    };
+  })
+);
+
+const esferaLabel = (e: string) => e.charAt(0).toUpperCase() + e.slice(1);
+const sistemaLabel = (s: string) => (s === 'majoritario' ? 'Majoritário' : 'Proporcional');
+---
+
+<Base
+  title="Cargos eletivos — PoliticaBR"
+  description="Os sete cargos que você escolhe no voto, com filtro por esfera e por poder."
+>
+  <section class="page wrap">
+    <h1>Cargos eletivos</h1>
+    <p class="page-intro">Os sete cargos que você escolhe no voto. Filtre por esfera ou por poder.</p>
+
+    <div class="filters">
+      <div class="filter-group" role="group" aria-label="Filtrar por esfera">
+        <span class="filter-label">Esfera</span>
+        <button class="chip is-active" data-group="esfera" data-value="todos" aria-pressed="true">Todas</button>
+        <button class="chip" data-group="esfera" data-value="federal" aria-pressed="false">Federal</button>
+        <button class="chip" data-group="esfera" data-value="estadual" aria-pressed="false">Estadual</button>
+        <button class="chip" data-group="esfera" data-value="municipal" aria-pressed="false">Municipal</button>
+      </div>
+      <div class="filter-group" role="group" aria-label="Filtrar por poder">
+        <span class="filter-label">Poder</span>
+        <button class="chip is-active" data-group="poder" data-value="todos" aria-pressed="true">Todos</button>
+        <button class="chip" data-group="poder" data-value="executivo" aria-pressed="false">Executivo</button>
+        <button class="chip" data-group="poder" data-value="legislativo" aria-pressed="false">Legislativo</button>
+      </div>
+    </div>
+
+    <ul class="cargo-grid">
+      {cargos.map((c) => (
+        <li class="cargo-card" data-esfera={c.data.esfera} data-poder={c.poderId} style={`--accent:${c.cor}`}>
+          <a href={`/cargos/${c.id}/`}>
+            <span class="cargo-tag">{c.poderNome}</span>
+            <h2>{c.data.nome}</h2>
+            <p>{c.data.resumo}</p>
+            <span class="cargo-meta">{esferaLabel(c.data.esfera)} · {sistemaLabel(c.data.sistema)}</span>
+          </a>
+        </li>
+      ))}
+    </ul>
+
+    <p class="empty" hidden>Nenhum cargo com esses filtros.</p>
+
+    <p class="nota">O Judiciário não aparece aqui: seus membros não são eleitos — entram por concurso ou indicação.</p>
+  </section>
+</Base>
+
+<script>
+  const state = { esfera: 'todos', poder: 'todos' };
+  const cards = [...document.querySelectorAll<HTMLElement>('.cargo-card')];
+  const empty = document.querySelector<HTMLElement>('.empty');
+  const buttons = [...document.querySelectorAll<HTMLButtonElement>('.chip')];
+
+  function apply() {
+    let visible = 0;
+    for (const card of cards) {
+      const okEsfera = state.esfera === 'todos' || card.dataset.esfera === state.esfera;
+      const okPoder = state.poder === 'todos' || card.dataset.poder === state.poder;
+      const show = okEsfera && okPoder;
+      card.hidden = !show;
+      if (show) visible++;
+    }
+    if (empty) empty.hidden = visible !== 0;
+  }
+
+  for (const btn of buttons) {
+    btn.addEventListener('click', () => {
+      const group = btn.dataset.group as 'esfera' | 'poder';
+      state[group] = btn.dataset.value!;
+      for (const b of buttons) {
+        if (b.dataset.group === group) {
+          const active = b === btn;
+          b.classList.toggle('is-active', active);
+          b.setAttribute('aria-pressed', String(active));
+        }
+      }
+      apply();
+    });
+  }
+</script>
+
+<style>
+  .page { padding-block: 2.5rem 1rem; }
+  .page > h1 { font-size: clamp(2rem, 4vw, 2.8rem); margin: 0; }
+  .page-intro { color: var(--muted); font-size: 1.1rem; max-width: 50ch; margin: 0.6rem 0 0; }
+
+  .filters { display: flex; flex-wrap: wrap; gap: 1.25rem 2.5rem; margin-top: 1.75rem; }
+  .filter-group { display: flex; align-items: center; flex-wrap: wrap; gap: 0.5rem; }
+  .filter-label { font-size: 0.85rem; color: var(--muted); font-weight: 600; margin-right: 0.25rem; }
+  .chip { font: inherit; font-size: 0.9rem; cursor: pointer; border: 1px solid var(--line-strong); background: var(--surface); color: var(--ink); padding: 0.35rem 0.9rem; border-radius: 999px; }
+  .chip:hover { border-color: var(--ink); }
+  .chip.is-active { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+
+  .cargo-grid { list-style: none; padding: 0; margin: 1.75rem 0 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr)); gap: 1rem; }
+  .cargo-card { list-style: none; }
+  .cargo-card[hidden] { display: none; }
+  .cargo-card a { display: flex; flex-direction: column; gap: 0.35rem; height: 100%; background: var(--surface); border: 1px solid var(--line); border-left: 3px solid var(--accent); border-radius: 3px; padding: 1.1rem 1.25rem 1.25rem; text-decoration: none; }
+  .cargo-card a:hover { border-color: var(--line-strong); border-left-color: var(--accent); background: color-mix(in srgb, var(--accent) 4%, var(--surface)); }
+  .cargo-tag { color: var(--accent); font-size: 0.8rem; font-weight: 700; }
+  .cargo-card h2 { font-size: 1.25rem; margin: 0; }
+  .cargo-card p { color: var(--muted); font-size: 0.95rem; margin: 0; flex: 1; }
+  .cargo-meta { color: var(--muted); font-size: 0.85rem; margin-top: 0.3rem; }
+
+  .empty { color: var(--muted); margin-top: 1.5rem; }
+  .nota { color: var(--muted); font-size: 0.9rem; margin-top: 2rem; border-top: 1px solid var(--line); padding-top: 1rem; max-width: 60ch; }
+</style>

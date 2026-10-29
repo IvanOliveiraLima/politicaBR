@@ -1,8 +1,151 @@
 ---
-import Base from '../layouts/Base.astro'
+import { getCollection } from 'astro:content';
+import Base from '../layouts/Base.astro';
+
+const cargos = (await getCollection('cargos')).sort((a, b) => a.data.ordem - b.data.ordem);
 ---
 
-<Base title="Início">
-  <h1>PoliticaBR</h1>
-  <p>Referência sobre o sistema político brasileiro.</p>
+<Base title="PoliticaBR — Entenda o sistema político brasileiro">
+  <!-- HERO -->
+  <section class="hero wrap">
+    <div class="hero-motif" aria-hidden="true">
+      <svg viewBox="0 0 200 140" xmlns="http://www.w3.org/2000/svg">
+        <polygon points="100,17 183,70 100,123 17,70" fill="var(--br-amarelo)" />
+        <circle cx="100" cy="70" r="35" fill="var(--br-azul)" />
+      </svg>
+    </div>
+    <h1>Entenda quem você elege.</h1>
+    <p>Um guia claro sobre os cargos que você vota e sobre como funciona o poder no Brasil.</p>
+  </section>
+
+  <!-- OS 3 PODERES -->
+  <section class="home-section poderes wrap">
+    <h2>Como o poder se divide</h2>
+    <p class="lead">A Constituição divide o governo em três poderes para que um controle o outro. Nas eleições, você escolhe apenas dois deles: o Executivo e o Legislativo.</p>
+
+    <div class="diagram">
+      <svg viewBox="0 0 680 460" role="img" xmlns="http://www.w3.org/2000/svg">
+        <title>Os três poderes e seus freios e contrapesos</title>
+        <desc>Executivo, Legislativo e Judiciário, com setas em ambas as direções mostrando como cada um controla os outros.</desc>
+        <defs>
+          <marker id="ah" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+            <path d="M2 1 L8 5 L2 9" fill="none" stroke="context-stroke" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
+          </marker>
+        </defs>
+
+        <!-- setas (coloridas pelo poder que age) -->
+        <line x1="280" y1="100" x2="170" y2="356" stroke="var(--executivo)" stroke-width="1.6" marker-end="url(#ah)" />
+        <line x1="215" y1="356" x2="315" y2="100" stroke="var(--legislativo)" stroke-width="1.6" marker-end="url(#ah)" />
+        <line x1="400" y1="100" x2="500" y2="356" stroke="var(--executivo)" stroke-width="1.6" marker-end="url(#ah)" />
+        <line x1="560" y1="356" x2="452" y2="100" stroke="var(--judiciario)" stroke-width="1.6" marker-end="url(#ah)" />
+        <line x1="254" y1="382" x2="426" y2="382" stroke="var(--legislativo)" stroke-width="1.6" marker-end="url(#ah)" />
+        <line x1="426" y1="402" x2="254" y2="402" stroke="var(--judiciario)" stroke-width="1.6" marker-end="url(#ah)" />
+
+        <!-- caixas (clicáveis) -->
+        <a href="/poderes/#executivo">
+          <rect x="250" y="40" width="180" height="60" rx="8" fill="#f8e8e0" stroke="var(--executivo)" stroke-width="1.5" />
+          <text x="340" y="66" text-anchor="middle" class="box-title">Executivo</text>
+          <text x="340" y="85" text-anchor="middle" class="box-sub">administra e executa</text>
+        </a>
+        <a href="/poderes/#legislativo">
+          <rect x="40" y="360" width="210" height="60" rx="8" fill="#e2f3ec" stroke="var(--legislativo)" stroke-width="1.5" />
+          <text x="145" y="386" text-anchor="middle" class="box-title">Legislativo</text>
+          <text x="145" y="405" text-anchor="middle" class="box-sub">faz as leis e fiscaliza</text>
+        </a>
+        <a href="/poderes/#judiciario">
+          <rect x="430" y="360" width="210" height="60" rx="8" fill="#ebeafb" stroke="var(--judiciario)" stroke-width="1.5" />
+          <text x="535" y="386" text-anchor="middle" class="box-title">Judiciário</text>
+          <text x="535" y="405" text-anchor="middle" class="box-sub">julga e guarda a Constituição</text>
+        </a>
+
+        <!-- numeradores das setas -->
+        <g class="badge"><circle cx="215" cy="210" r="11" /><text x="215" y="210" class="badge-n">1</text></g>
+        <g class="badge"><circle cx="262" cy="248" r="11" /><text x="262" y="248" class="badge-n">2</text></g>
+        <g class="badge"><circle cx="445" cy="210" r="11" /><text x="445" y="210" class="badge-n">3</text></g>
+        <g class="badge"><circle cx="512" cy="248" r="11" /><text x="512" y="248" class="badge-n">4</text></g>
+        <g class="badge"><circle cx="340" cy="369" r="11" /><text x="340" y="369" class="badge-n">5</text></g>
+        <g class="badge"><circle cx="340" cy="415" r="11" /><text x="340" y="415" class="badge-n">6</text></g>
+      </svg>
+    </div>
+
+    <ol class="freios">
+      <li><span class="n">1</span><span><b>Executivo &rarr; Legislativo:</b> pode vetar uma lei aprovada.</span></li>
+      <li><span class="n">2</span><span><b>Legislativo &rarr; Executivo:</b> derruba o veto, fiscaliza (CPI) e pode abrir impeachment.</span></li>
+      <li><span class="n">3</span><span><b>Executivo &rarr; Judiciário:</b> indica os ministros do STF.</span></li>
+      <li><span class="n">4</span><span><b>Judiciário &rarr; Executivo:</b> julga e pode anular atos do governo.</span></li>
+      <li><span class="n">5</span><span><b>Legislativo &rarr; Judiciário:</b> aprova as indicações e cria as leis que ele aplica.</span></li>
+      <li><span class="n">6</span><span><b>Judiciário &rarr; Legislativo:</b> pode declarar uma lei inconstitucional.</span></li>
+    </ol>
+
+    <p class="more"><a href="/poderes/">Entenda cada poder em detalhe</a></p>
+  </section>
+
+  <!-- OS CARGOS -->
+  <section class="home-section wrap">
+    <h2>Os cargos que você vota</h2>
+    <p class="lead">Sete cargos, em três esferas. Toque em um para ver a ficha completa.</p>
+    <ul class="cargo-list">
+      {cargos.map((c) => (
+        <li>
+          <a href={`/cargos/${c.id}/`}>
+            <strong>{c.data.nome}</strong>
+            <span>{c.data.resumo}</span>
+          </a>
+        </li>
+      ))}
+    </ul>
+    <p class="more"><a href="/cargos/">Ver o índice com filtros</a></p>
+  </section>
+
+  <!-- COMO SE VOTA -->
+  <section class="home-section wrap">
+    <h2>Como se vota</h2>
+    <p class="lead">Os dois ciclos de eleição, a diferença entre voto majoritário e proporcional, os turnos e quem organiza tudo.</p>
+    <p class="more"><a href="/como-se-vota/">Ler sobre o processo eleitoral</a></p>
+  </section>
 </Base>
+
+<style>
+  /* HERO */
+  .hero { position: relative; overflow: hidden; padding-block: 4rem 1.5rem; }
+  .hero > :not(.hero-motif) { position: relative; z-index: 1; }
+  .hero-motif { position: absolute; top: 50%; right: -2rem; transform: translateY(-50%); width: min(44vw, 480px); opacity: 0.07; pointer-events: none; z-index: 0; }
+  .hero-motif svg { display: block; width: 100%; height: auto; }
+  .hero h1 { font-size: clamp(2.6rem, 7vw, 4.5rem); margin: 0; max-width: 14ch; line-height: 1.04; }
+  .hero p { font-size: 1.25rem; color: var(--muted); max-width: 46ch; margin: 1.1rem 0 0; }
+
+  /* SEÇÕES */
+  .home-section { padding-block: 3.5rem 0; }
+  .home-section > h2 { font-size: clamp(1.6rem, 3vw, 2.2rem); margin: 0; }
+  .home-section > .lead { color: var(--muted); font-size: 1.1rem; max-width: 54ch; margin: 0.6rem 0 0; }
+  .more { margin: 1.25rem 0 0; }
+  .more a { color: var(--ink); font-weight: 600; text-decoration: none; border-bottom: 2px solid var(--br-amarelo); padding-bottom: 1px; }
+  .more a:hover { border-bottom-color: var(--ink); }
+
+  /* DIAGRAMA DOS PODERES */
+  .poderes { text-align: center; }
+  .poderes > .lead { margin-inline: auto; }
+  .diagram { max-width: 600px; margin: 2rem auto 0; }
+  .diagram svg { width: 100%; height: auto; display: block; }
+  .diagram text { font-family: var(--sans); }
+  .box-title { font-size: 17px; font-weight: 700; fill: var(--ink); }
+  .box-sub { font-size: 12px; fill: var(--muted); }
+  .badge circle { fill: #fff; stroke: var(--line-strong); stroke-width: 1; }
+  .badge-n { font-family: var(--sans); font-size: 13px; font-weight: 600; fill: var(--ink); text-anchor: middle; dominant-baseline: central; }
+  .diagram a { cursor: pointer; }
+  .diagram a rect { transition: filter 0.15s ease; }
+  .diagram a:hover rect { filter: brightness(0.96); }
+  .diagram a:focus-visible rect { stroke-width: 3; outline: none; }
+
+  .freios { list-style: none; margin: 2.25rem auto 0; padding: 0; max-width: 620px; display: grid; gap: 0.6rem; text-align: left; }
+  .freios li { display: flex; gap: 0.7rem; align-items: baseline; font-size: 0.95rem; }
+  .freios .n { flex: none; width: 1.5rem; height: 1.5rem; border-radius: 50%; border: 1px solid var(--line-strong); display: inline-flex; align-items: center; justify-content: center; font-size: 0.8rem; font-weight: 600; }
+  .freios b { font-weight: 700; }
+
+  /* LISTA DE CARGOS */
+  .cargo-list { list-style: none; padding: 0; margin: 1.5rem 0 0; display: grid; gap: 1px; background: var(--line); border: 1px solid var(--line); border-radius: 4px; overflow: hidden; }
+  .cargo-list a { display: flex; flex-direction: column; gap: 0.2rem; padding: 1rem 1.25rem; background: var(--bg); text-decoration: none; }
+  .cargo-list a:hover { background: var(--surface); }
+  .cargo-list strong { font-family: var(--serif); font-weight: 600; font-size: 1.15rem; }
+  .cargo-list span { color: var(--muted); font-size: 0.95rem; }
+</style>

@@ -1,0 +1,83 @@
+---
+import { getCollection, render } from 'astro:content';
+import Base from '../layouts/Base.astro';
+
+const poderes = (await getCollection('poderes')).sort((a, b) => a.data.ordem - b.data.ordem);
+const cargos = (await getCollection('cargos')).sort((a, b) => a.data.ordem - b.data.ordem);
+
+const sections = await Promise.all(
+  poderes.map(async (p) => ({
+    p,
+    Content: (await render(p)).Content,
+    cargos: cargos.filter((c) => c.data.poder.id === p.id),
+  }))
+);
+---
+
+<Base
+  title="Os três poderes — PoliticaBR"
+  description="Executivo, Legislativo e Judiciário: o que cada poder faz e por que você vota só em dois deles."
+>
+  <section class="page wrap">
+    <h1>Os três poderes</h1>
+    <p class="page-intro">A Constituição divide o governo em três poderes independentes que se controlam mutuamente. Veja o que cada um faz — e por que, nas eleições, você escolhe apenas dois deles.</p>
+    <p class="more"><a href="/">Ver o diagrama de freios e contrapesos</a></p>
+
+    <nav class="poder-nav" aria-label="Os poderes">
+      {poderes.map((p) => (
+        <a href={`#${p.id}`} style={`--accent:${p.data.cor}`}>{p.data.nome}</a>
+      ))}
+    </nav>
+
+    <div class="poderes">
+      {sections.map(({ p, Content, cargos }) => (
+        <section id={p.id} class="poder" style={`--accent:${p.data.cor}`}>
+          <h2>{p.data.nome}</h2>
+          <p class="poder-funcao">{p.data.funcao}</p>
+          <div class="prose"><Content /></div>
+
+          {cargos.length > 0 ? (
+            <div class="poder-cargos">
+              <h3>Cargos eleitos deste poder</h3>
+              <ul>
+                {cargos.map((c) => (
+                  <li><a href={`/cargos/${c.id}/`}>{c.data.nome}</a></li>
+                ))}
+              </ul>
+            </div>
+          ) : (
+            <p class="poder-nota">Não tem cargos eletivos: seus membros entram por concurso ou indicação, não pelo voto.</p>
+          )}
+        </section>
+      ))}
+    </div>
+  </section>
+</Base>
+
+<style>
+  .page { padding-block: 2.5rem 1rem; }
+  .page > h1 { font-size: clamp(2rem, 4vw, 2.8rem); margin: 0; }
+  .page-intro { color: var(--muted); font-size: 1.1rem; max-width: 54ch; margin: 0.6rem 0 0; }
+  .more { margin: 1rem 0 0; }
+  .more a { color: var(--ink); font-weight: 600; text-decoration: none; border-bottom: 2px solid var(--br-amarelo); padding-bottom: 1px; }
+  .more a:hover { border-bottom-color: var(--ink); }
+
+  .poder-nav { display: flex; flex-wrap: wrap; gap: 0.6rem; margin: 1.75rem 0 0; }
+  .poder-nav a { display: inline-flex; align-items: center; gap: 0.5rem; text-decoration: none; border: 1px solid var(--line-strong); border-radius: 999px; padding: 0.35rem 0.9rem; font-weight: 600; font-size: 0.9rem; }
+  .poder-nav a::before { content: ""; width: 9px; height: 9px; border-radius: 2px; background: var(--accent); }
+  .poder-nav a:hover { border-color: var(--accent); }
+
+  .poder { scroll-margin-top: 5rem; border-left: 3px solid var(--accent); padding-left: 1.4rem; margin-top: 3rem; }
+  .poder h2 { font-size: 1.8rem; margin: 0; }
+  .poder-funcao { color: var(--accent); font-weight: 600; font-size: 1.15rem; margin: 0.3rem 0 0; max-width: var(--measure); }
+
+  .prose { max-width: var(--measure); }
+  .prose :global(p) { margin: 1rem 0 0; }
+
+  .poder-cargos { margin-top: 1.5rem; }
+  .poder-cargos h3 { font-family: var(--sans); font-size: 0.9rem; font-weight: 700; margin: 0 0 0.5rem; color: var(--muted); }
+  .poder-cargos ul { list-style: none; display: flex; flex-wrap: wrap; gap: 0.5rem; padding: 0; margin: 0; }
+  .poder-cargos a { display: inline-block; border: 1px solid var(--line-strong); border-radius: 999px; padding: 0.3rem 0.85rem; text-decoration: none; font-size: 0.9rem; }
+  .poder-cargos a:hover { border-color: var(--accent); color: var(--accent); }
+  .poder-nota { margin-top: 1.25rem; color: var(--muted); font-size: 0.95rem; max-width: var(--measure); }
+</style>

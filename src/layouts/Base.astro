@@ -1,32 +1,56 @@
 ---
-interface Props {
-  title: string
-  description?: string
-}
+import '../styles/global.css';
 
-const { title, description = 'PoliticaBR — referência sobre o sistema político brasileiro' } = Astro.props
+interface Props {
+  title: string;
+  description?: string;
+}
+const {
+  title,
+  description = 'Guia de educação cívica sobre os cargos eletivos e os três poderes no Brasil.',
+} = Astro.props;
 ---
 
 <!doctype html>
 <html lang="pt-BR">
   <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="generator" content={Astro.generator} />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
     <meta name="description" content={description} />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <link rel="icon" href="/favicon.ico" />
-    <title>{title} | PoliticaBR</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,900&family=Public+Sans:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
   </head>
   <body>
-    <header>
-      <a href="/">PoliticaBR</a>
+    <header class="site-header">
+      <div class="wrap">
+        <a class="brand" href="/">
+          <span class="poderes-mark" aria-hidden="true"><i></i><i></i><i></i></span>
+          PoliticaBR
+        </a>
+        <nav class="nav" aria-label="Principal">
+          <a href="/cargos/">Cargos</a>
+          <a href="/poderes/">3 Poderes</a>
+          <a href="/como-se-vota/">Como se vota</a>
+          <a href="/glossario/">Glossário</a>
+          <a href="/sobre/">Sobre</a>
+        </nav>
+      </div>
     </header>
+
     <main>
       <slot />
     </main>
-    <footer>
-      <p>PoliticaBR</p>
+
+    <footer class="site-footer">
+      <div class="wrap">
+        <span>PoliticaBR — educação cívica, sem partido.</span>
+        <span>Fontes oficiais: Constituição de 1988 e TSE.</span>
+      </div>
     </footer>
   </body>
 </html>
